@@ -1,0 +1,39 @@
+[submodule "vim/.vim/plugged/gruvbox-material"]
+	path = vim/.vim/plugged/gruvbox-material
+	url = https://github.com/sainnhe/gruvbox-material.git
+[submodule "vim/.vim/plugged/ale"]
+	path = vim/.vim/plugged/ale
+	url = https://github.com/dense-analysis/ale.git
+[submodule "vim/.vim/plugged/dash"]
+	path = vim/.vim/plugged/dash
+	url = https://github.com/rizzatti/dash.vim.git
+[submodule "vim/.vim/plugged/emmet-vim"]
+	path = vim/.vim/plugged/emmet-vim
+	url = https://github.com/mattn/emmet-vim.git
+[submodule "vim/.vim/plugged/everforest"]
+	path = vim/.vim/plugged/everforest
+	url = https://github.com/sainnhe/everforest.git
+[submodule "vim/.vim/plugged/nerdtree"]
+	path = vim/.vim/plugged/nerdtree
+	url = https://github.com/preservim/nerdtree.git
+[submodule "vim/.vim/plugged/vim-airline-themes"]
+	path = vim/.vim/plugged/vim-airline-themes
+	url = https://github.com/vim-airline/vim-airline-themes.git
+[submodule "vim/.vim/plugged/vim-airline"]
+	path = vim/.vim/plugged/vim-airline
+	url = https://github.com/vim-airline/vim-airline.git
+[submodule "vim/.vim/plugged/vim-colorschemes"]
+	path = vim/.vim/plugged/vim-colorschemes
+	url = https://github.com/flazz/vim-colorschemes.git
+[submodule "vim/.vim/plugged/vim-fugitive"]
+	path = vim/.vim/plugged/vim-fugitive
+	url = https://github.com/tpope/vim-fugitive.git
+[submodule "vim/.vim/plugged/vim-monokai-pro"]
+	path = vim/.vim/plugged/vim-monokai-pro
+	url = https://github.com/phanviet/vim-monokai-pro.git
+[submodule "vim/.vim/plugged/vim-surround"]
+	path = vim/.vim/plugged/vim-surround
+	url = https://github.com/tpope/vim-surround.git
+[submodule "vim/.vim/plugged/YouCompleteMe"]
+	path = vim/.vim/plugged/YouCompleteMe
+	url = https://github.com/ycm-core/YouCompleteMe.git
