@@ -18,6 +18,13 @@ call plug#end()
 
 " color scheme
 set termguicolors
+augroup my_colorschemes
+  au!
+  au Colorscheme monokai_pro hi Normal guibg=NONE ctermbg=NONE
+  au Colorscheme monokai_pro hi NonText guibg=NONE ctermbg=NONE
+augroup END
 colorscheme monokai_pro
+
+
 
 set backspace=indent,eol,start

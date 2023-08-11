@@ -47,15 +47,15 @@ truncation_symbol = "…/"
 
 [c]
 symbol = " "
-format = '[ $symbol ($version) ]($style)'
+format = '[$symbol ($version) ]($style)'
 
 [docker_context]
 symbol = " "
-format = '[ $symbol $context ]($style) $path'
+format = '[$symbol $context ]($style) $path'
 
 [git_branch]
-symbol = "git ::"
-format = '[ $symbol $branch ]($style)'
+symbol = " "
+format = '[$symbol $branch ]($style)'
 
 [git_status]
 format = '[$all_status$ahead_behind ]($style)'
@@ -63,25 +63,25 @@ format = '[$all_status$ahead_behind ]($style)'
 [golang]
 symbol = " "
 style = "bg:#86BBD8"
-format = '[ $symbol ($version) ]($style)'
+format = '[$symbol ($version) ]($style)'
 
 [java]
 symbol = " "
 style = "bg:#86BBD8"
-format = '[ $symbol ($version) ]($style)'
+format = '[$symbol ($version) ]($style)'
 
 [julia]
 symbol = " "
 style = "bg:#86BBD8"
-format = '[ $symbol ($version) ]($style)'
+format = '[$symbol ($version) ]($style)'
 
 [nodejs]
-symbol = ":node:"
-format = '[ $symbol ($version) ]($style)'
+symbol = " "
+format = '[$symbol ($version) ]($style)'
 
 [rust]
-symbol = "🦀"
-format = '[ $symbol ($version) ]($style)'
+symbol = ""
+format = '[$symbol ($version) ]($style)'
 
 [time]
 disabled = false
