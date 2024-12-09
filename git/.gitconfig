@@ -3,3 +3,14 @@
 # Please adapt and uncomment the following lines:
 	name = Dave Frame
 	email = dframe22@gmail.com
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+[push]
+    autoSetupRemote = true
+[difftool "vimdiff"]
+	cmd = vimdiff \"$LOCAL\" \"$REMOTE\"
+[diff]
+	tool = vimdiff

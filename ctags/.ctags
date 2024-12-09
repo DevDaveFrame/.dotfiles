@@ -2,7 +2,6 @@
 --exclude=.git
 --exclude=BUILD
 --exclude=.svn
---exclude=*.js
 --exclude=vendor/*
 --exclude=node_modules/*
 --exclude=db/*
@@ -18,3 +17,5 @@
 --exclude=\*.cache
 --exclude=\*.dll
 --exclude=\*.pdb
+--exclude=media
+--exclude=\*webpack.*.js

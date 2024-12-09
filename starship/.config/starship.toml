@@ -1,22 +1,27 @@
 format = """
-[┌──  ](bold green)\
+[┌── ](bold #ff6ac1)\
 $username\
+[running ](#ff6ac1)\
+$python\
 $c\
 $golang\
 $java\
-$julia\
 $nodejs\
 $rust\
 $docker_context\
+$gcloud\
 $cmd_duration\
 $time
-[@](bold green)\
+[@ ](bold #ff6ac1)\
 $directory\
 $git_branch\
 $git_commit\
 $git_state\
 $git_status
-[└─────/>_/ ](bold green)
+$git_metrics\
+[└/>](bold #ff6ac1)\
+[_](blink #ff6ac1)\
+[/ ](bold #ff6ac1)\
 """
 
 # Disable the blank line at the start of the prompt
@@ -30,15 +35,15 @@ format = '[$user ]($style)'
 [directory]
 format = "[ $path ]($style)"
 truncation_length = 3
-truncation_symbol = "…/"
+truncation_symbol = "… /"
 
 # Here is how you can shorten some long paths by text replacement
 # similar to mapped_locations in Oh My Posh:
 [directory.substitutions]
-"Documents" = "🗂️"
-"Downloads" = "⇵"
-"Music" = "🎹"
-"Pictures" = "📷"
+"Documents" = "󰈙"
+"Downloads" = "" 
+"Music" = "󱍙"
+"Pictures" = ""
 # Keep in mind that the order matters. For example:
 # "Important Documents" = "  "
 # will not be replaced, because "Documents" was already substituted before.
@@ -46,16 +51,24 @@ truncation_symbol = "…/"
 # "Important  " = "  "
 
 [c]
-symbol = " "
+symbol = ""
 format = '[$symbol ($version) ]($style)'
 
 [docker_context]
-symbol = " "
+symbol = ""
 format = '[$symbol $context ]($style) $path'
 
+[gcloud]
+symbol = ""
+format = 'on [$symbol $account(\($project\))]($style) '
+
 [git_branch]
-symbol = " "
+symbol = ""
 format = '[$symbol $branch ]($style)'
+
+[git_metrics]
+added_style = 'bold blue'
+format = '[+$added]($added_style)/[-$deleted]($deleted_style) '
 
 [git_status]
 format = '[$all_status$ahead_behind ]($style)'
@@ -76,12 +89,17 @@ style = "bg:#86BBD8"
 format = '[$symbol ($version) ]($style)'
 
 [nodejs]
-symbol = " "
-format = '[$symbol ($version) ]($style)'
+symbol = ""
+format = '[$symbol ($version) ](dimmed green)'
 
 [rust]
 symbol = ""
 format = '[$symbol ($version) ]($style)'
+
+[python]
+symbol = ''
+pyenv_version_name = true
+format = '[$symbol ($version) ](yellow)'
 
 [time]
 disabled = false
