@@ -3,7 +3,9 @@ sudo xcodebuild -license accept
 
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-brew install git
+brew install git cmake ctags displayplacer gh go lua luajit luarocks neovim nvm pandoc postgresql readline ripgrep sqlite starship stow stripe tmux tree-sitter wget zld
+
+brew install orbstack
 
 # take screenshots as jpg (usually smaller size) and not png
 defaults write com.apple.screencapture type jpg
