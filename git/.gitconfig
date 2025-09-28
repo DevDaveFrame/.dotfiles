@@ -2,7 +2,15 @@
 [user]
 # Please adapt and uncomment the following lines:
 	name = Dave Frame
-	email = dframe22@gmail.com
+    email = dframe22@gmail.com
+[column]
+        ui = auto
+[branch]
+        sort = -committerdate
+[fetch]
+        prune = true
+        pruneTags = true
+        all = true
 [filter "lfs"]
 	required = true
 	clean = git-lfs clean -- %f
@@ -14,3 +22,9 @@
 	cmd = vimdiff \"$LOCAL\" \"$REMOTE\"
 [diff]
 	tool = vimdiff
+    algorithm = histogram
+    colorMoved = plain
+    mnemonicPrefix = true
+    renames = true
+[core]
+	excludesfile = ~/.gitignore
