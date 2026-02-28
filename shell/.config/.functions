@@ -1,0 +1,193 @@
+function updateDivesite() {
+
+    # Store the target directory and branch
+    local targetDir="$HOME/Work/divesite"
+    local targetBranch="main"
+
+    # Get the current directory and branch
+    local currentDir=$(pwd)
+    local currentBranch=$(git rev-parse --abbrev-ref HEAD)
+
+    # Check if in the target directory and on the target branch
+    if [[ "$currentDir" == "$targetDir" && "$currentBranch" == "$targetBranch" ]]; then
+        # Pull changes from the remote repository
+        git pull
+
+        # Append the command to the .env file, creating the file if it does not exist
+        echo "DIVESITE_LOCAL_APP_COMMAND=sleep inf" >> .env
+    else
+        echo "Not in the correct directory or branch."
+    fi
+}
+
+function reactModule() {
+    if [ -z "$1" ]; then
+        echo "Please specify a component name."
+        return 1
+    fi
+
+    local componentName=$1
+    local dirName=$(echo "$componentName")
+
+    mkdir -p "$dirName"
+    cd "$dirName"
+
+    # Create the component file
+    cat > "${componentName}.jsx" <<EOF
+import React from 'react';
+import styles from './${componentName}.module.css';
+
+const ${componentName} = () => {
+    return <div className={styles.${componentName}}></div>;
+};
+
+export default ${componentName};
+EOF
+
+    # Create the CSS module file
+    touch "${componentName}.module.css"
+
+    # Create the index.js file for exporting the component
+    cat > index.js <<EOF
+export { default } from './${componentName}';
+EOF
+
+    cd ..
+    echo "${componentName} component scaffold created successfully."
+}
+
+qadeploy() {
+    local currentDir=$(pwd)
+    local targetDir="$HOME/Work/divesite"
+    local qaNumbers=()
+    local useMain=false
+
+    # Parse arguments to separate QA numbers from --main flag
+    for arg in "$@"; do
+        if [[ "$arg" == "--main" ]]; then
+            useMain=true
+        elif [[ "$arg" =~ ^[0-9]+$ ]]; then
+            qaNumbers+=("$arg")
+        else
+            echo "Error: Invalid argument '$arg'. Please provide QA numbers (integers) and/or --main flag."
+            return 1
+        fi
+    done
+
+    # Validate that at least one QA number was provided
+    if [[ ${#qaNumbers[@]} -eq 0 ]]; then
+        echo "Error: Please specify at least one QA number."
+        echo "Usage: qadeploy <qa_number1> [qa_number2 ...] [--main]"
+        return 1
+    fi
+
+    # Navigate to target directory if not already there
+    if [ "$currentDir" != "$targetDir" ]; then
+        cd "$targetDir" || { echo "Failed to navigate to $targetDir"; return 1; }
+    fi
+
+    # Determine which branch to deploy
+    local branchName
+    if [[ "$useMain" == true ]]; then
+        branchName="main"
+        echo "Deploying main branch to QA environments: ${qaNumbers[*]}"
+    else
+        # Get current git branch name
+        branchName=$(git rev-parse --abbrev-ref HEAD)
+        if [ -z "$branchName" ]; then
+            echo "Failed to retrieve the current git branch."
+            return 1
+        fi
+        echo "Deploying branch '$branchName' to QA environments: ${qaNumbers[*]}"
+    fi
+
+    # Deploy to all specified QA environments in a single build session
+    (
+        cd build || { echo "Failed to navigate to build directory"; return 1; }
+
+        local deploymentFailed=false
+        for qaNum in "${qaNumbers[@]}"; do
+            echo "Deploying to qa$qaNum..."
+            if ! pipenv run fab deploy "qa$qaNum" --branch="$branchName"; then
+                echo "Deployment to qa$qaNum failed"
+                deploymentFailed=true
+            else
+                echo "Successfully deployed to qa$qaNum"
+            fi
+        done
+
+        if [[ "$deploymentFailed" == true ]]; then
+            echo "One or more deployments failed"
+            return 1
+        else
+            echo "All deployments completed successfully"
+        fi
+    ) || {
+        echo "Deployment process failed";
+        return 1;
+    }
+}
+
+function reset-vm() {
+    for arg in "$@"; do
+        gcloud compute instances reset ${arg}-app-instance --verbosity=info
+    done
+}
+
+function update-dive-dns() {
+    if [[ -z "$1" ]]; then
+        echo "Error: Deployment name is required."
+        return 1
+    fi
+
+    DEPLOYMENT_NAME=$1
+    {
+        gcloud dns --project=industry-dive record-sets transaction start --zone=industrydive-net-zone &&
+	gcloud dns --project=industry-dive record-sets transaction remove --name=${DEPLOYMENT_NAME}.industrydive.net. --ttl=300 --type=A --zone=industrydive-net-zone "$(nslookup ${DEPLOYMENT_NAME}.industrydive.net | grep 'Address:' | awk '{print $2}' | tail -n1)" && \
+        gcloud dns --project=industry-dive record-sets transaction add \
+        "$(gcloud --project=divesites-205820 --format="value(networkInterfaces[0].accessConfigs[0].natIP)" compute instances describe ${DEPLOYMENT_NAME}-app-instance)" \
+        --name=${DEPLOYMENT_NAME}.industrydive.net. --ttl=300 --type=A --zone=industrydive-net-zone &&
+        gcloud dns --project=industry-dive record-sets transaction execute --zone=industrydive-net-zone
+    } || {
+        echo "Error: Failed to update DNS for deployment ${DEPLOYMENT_NAME}"
+        return 1
+    }
+}
+
+function add-dive-dns() {
+    if [[ -z "$1" ]]; then
+        echo "Error: Deployment name is required."
+        return 1
+    fi
+
+    DEPLOYMENT_NAME=$1
+    {
+        gcloud dns --project=industry-dive record-sets transaction start --zone=industrydive-net-zone &&
+        gcloud dns --project=industry-dive record-sets transaction add \
+        "$(gcloud --project=divesites-205820 --format="value(networkInterfaces[0].accessConfigs[0].natIP)" compute instances describe ${DEPLOYMENT_NAME}-app-instance)" \
+        --name=${DEPLOYMENT_NAME}.industrydive.net. --ttl=300 --type=A --zone=industrydive-net-zone &&
+        gcloud dns --project=industry-dive record-sets transaction execute --zone=industrydive-net-zone
+    } || {
+        echo "Error: Failed to update DNS for deployment ${DEPLOYMENT_NAME}"
+        return 1
+    }
+}
+
+function gcsh() {
+    if [[ -z "$1" ]]; then
+        echo "Error: VM instance is required."
+        return 1
+    fi
+
+    INSTANCE=$1
+
+    gcloud compute ssh ${INSTANCE}-app-instance --tunnel-through-iap --zone=us-east4-c
+}
+
+function goprod() {
+    gcloud compute ssh --zone "us-east4-b" "prod2" --project "divesites-205820" --tunnel-through-iap
+}
+
+function add_cursor_rules() {
+    cp -r ~/cursor_rules/.cursor/ ./.cursor
+}

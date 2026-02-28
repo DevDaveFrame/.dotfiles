@@ -1,0 +1,16 @@
+layout {
+    pane split_direction="horizontal" {
+        pane size="50%" {
+            command "git"
+            args "status"
+        }
+        pane size="30%" {
+            command "docker"
+            args "exec" "-it" "divesite-app-1" "bash" "-c" "python manage.py runserver 0:8000 --settings=hr_settings"
+        }
+        pane size="20%" {
+            command "npm"
+            args "run" "watch"
+        }
+    }
+}

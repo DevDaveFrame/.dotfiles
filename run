@@ -1,0 +1,144 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+fmt()  { printf "\n\033[1;34m==> %s\033[0m\n" "$*"; }
+ok()   { printf "  \033[32m✓\033[0m %s\n" "$*"; }
+skip() { printf "  \033[33m⏭\033[0m %s (already installed)\n" "$*"; }
+
+DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+STOW_PACKAGES=(git nvim starship zsh zellij skhd yabai shell)
+
+# ─────────────────────────────────────────────
+# 1. Xcode CLI tools + Homebrew
+# ─────────────────────────────────────────────
+fmt "Xcode CLI tools"
+if xcode-select -p &>/dev/null; then
+  skip "Xcode CLI tools"
+else
+  xcode-select --install
+  echo "  Waiting for Xcode CLI tools install to finish..."
+  until xcode-select -p &>/dev/null; do sleep 5; done
+  ok "Xcode CLI tools"
+fi
+
+fmt "Homebrew"
+if command -v brew &>/dev/null; then
+  skip "Homebrew"
+else
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+  ok "Homebrew"
+fi
+
+# ─────────────────────────────────────────────
+# 2. Languages
+# ─────────────────────────────────────────────
+fmt "Rust (rustup)"
+if command -v rustup &>/dev/null; then
+  skip "Rust"
+else
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  # shellcheck disable=SC1091
+  source "$HOME/.cargo/env"
+  ok "Rust"
+fi
+
+fmt "Go"
+if brew list go &>/dev/null; then
+  skip "Go"
+else
+  brew install go
+  ok "Go"
+fi
+
+fmt "Python (pyenv)"
+if command -v pyenv &>/dev/null; then
+  skip "pyenv"
+else
+  brew install pyenv
+  eval "$(pyenv init -)"
+  ok "pyenv"
+fi
+if ! pyenv versions --bare | grep -q '^3\.'; then
+  latest=$(pyenv install --list | grep -E '^\s+3\.[0-9]+\.[0-9]+$' | tail -1 | tr -d ' ')
+  pyenv install "$latest"
+  pyenv global "$latest"
+  ok "Python $latest"
+else
+  skip "Python 3.x"
+fi
+
+fmt "Node (nvm)"
+export NVM_DIR="$HOME/.nvm"
+if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+  skip "nvm"
+else
+  brew install nvm
+  mkdir -p "$NVM_DIR"
+  # shellcheck disable=SC1091
+  [[ -s "$NVM_DIR/nvm.sh" ]] || [[ -s "$(brew --prefix nvm)/nvm.sh" ]] && . "$(brew --prefix nvm)/nvm.sh"
+  ok "nvm"
+fi
+# shellcheck disable=SC1091
+[[ -s "$NVM_DIR/nvm.sh" ]] && . "$NVM_DIR/nvm.sh"
+if ! nvm ls --no-colors lts/* 2>/dev/null | grep -q 'v'; then
+  nvm install --lts
+  ok "Node LTS"
+else
+  skip "Node LTS"
+fi
+if ! command -v pnpm &>/dev/null; then
+  npm install -g pnpm
+  ok "pnpm"
+else
+  skip "pnpm"
+fi
+
+# ─────────────────────────────────────────────
+# 3. Tools (brew)
+# ─────────────────────────────────────────────
+fmt "Brew tools"
+tools=(orbstack neovim starship stow ripgrep lazygit gh zellij skhd yabai zsh-syntax-highlighting)
+for tool in "${tools[@]}"; do
+  if brew list "$tool" &>/dev/null; then
+    skip "$tool"
+  else
+    brew install "$tool"
+    ok "$tool"
+  fi
+done
+
+# ─────────────────────────────────────────────
+# 4. Stow packages
+# ─────────────────────────────────────────────
+fmt "Stow dotfiles"
+for pkg in "${STOW_PACKAGES[@]}"; do
+  if [[ -d "$DOTFILES/$pkg" ]]; then
+    stow --dir="$DOTFILES" --target="$HOME" --restow "$pkg"
+    ok "$pkg"
+  fi
+done
+
+# ─────────────────────────────────────────────
+# 5. macOS defaults
+# ─────────────────────────────────────────────
+fmt "macOS defaults"
+
+# Screenshots as JPG
+defaults write com.apple.screencapture type jpg
+ok "Screenshots → JPG"
+
+# Finder: show path bar, status bar, hidden files, Library
+defaults write com.apple.finder ShowPathbar -bool true
+defaults write com.apple.finder ShowStatusBar -bool true
+defaults write com.apple.finder AppleShowAllFiles YES
+chflags nohidden ~/Library
+ok "Finder prefs"
+
+# Don't reopen previous Preview files
+defaults write com.apple.Preview ApplePersistenceIgnoreState YES
+ok "Preview prefs"
+
+killall Finder &>/dev/null || true
+
+fmt "Done! Open a new shell to pick up changes."

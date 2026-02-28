@@ -1,0 +1,49 @@
+# SETTINGS AND CONFIG ACCESS
+alias vim="nvim"
+alias zshconfig="nvim ~/.zshrc"
+alias aliasconfig="cd ~/.config/ && nvim ~/.config/.aliases && cd -"
+alias functionsconfig="cd ~/.config/ && nvim ~/.config/.functions && cd -"
+alias zsource="source ~/.zshrc"
+alias vimconfig="nvim ~/.vimrc"
+alias nviminit="cd ~/.config/nvim && nvim && ~/.config/nvim/init.lua && cd -"
+alias nvimconfig="cd ~/.config/nvim && nvim ~/.config/nvim && cd -"
+alias starshipconfig="cd ~/.config && nvim starship.toml && cd -"
+alias ghosttyconfig="vim ~/Library/Application\ Support/com.mitchellh.ghostty/config"
+alias skhdconfig="cd ~/.config/skhd/ && vim ~/.config/skhd/skhdrc && cd -"
+alias yabaiconfig="cd ~/.config/yabai/ && vim ~/.config/yabai/yabairc && cd -"
+alias geminiconfig="cd ~/.config/yabai/ && vim ~/.gemini/ && cd -"
+alias claudeconfig="cd ~/.config/yabai/ && vim ~/.claude/ && cd -"
+alias getsshpub="tr -d '\n' < ~/.ssh/id_rsa.pub | pbcopy"
+# GIT SHORTCUTS
+alias gco='git checkout '
+alias gcm='git commit -m '
+alias gaa='git add -A'
+alias gpush='git push'
+alias gpull='git pull'
+# BASH OVERRIDES
+alias mv='mv -i'
+# NAV SHORTCUTS
+ alias ..='cd ..'
+ alias ...='cd ../..'
+ alias ....='cd ../../..'
+ alias .....='cd ../../../..'
+ alias ~='cd ~'
+ alias dev='cd ~/Develop/' 
+ alias work='cd ~/Work/'
+ alias create='cd ~/Create/'
+ alias divesite='work && cd divesite'
+ alias dive='divesite && nvm use && zellij --layout ~/.config/zellij/layouts/divesite.kdl'
+ alias divestripe='stripe listen --forward-to http://localhost:8000/api/v3/pressrelease/stripe-purchase-package-webhook'
+ alias icloud='cd ~/Library/Mobile\ Documents/'
+ alias portfolio='cd ~/Develop/portfolio-2025/ && vim . && cd -'
+ alias blog='cd ~/Develop/portfolio-2025/ && vim .drafts && cd -'
+ alias prep='cd ~/Develop/prep && vim . && cd -'
+# DOCK SPACERS
+ alias dockspace="defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="spacer-tile";}'; killall Dock"
+ alias dockspacesmall="defaults write com.apple.dock persistent-apps -array-add '{"tile-type"="small-spacer-tile";}'; killall Dock"
+# DIVE STUFF
+ alias divesleep="echo 'DIVESITE_LOCAL_APP_COMMAND=sleep inf' >> .env"
+# OBSIDIAN
+ alias obs-me="cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/me && nvim scratch.md && cd -"
+ alias obs-work="cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/work && nvim todo.md +ObsidianToday && cd -"
+

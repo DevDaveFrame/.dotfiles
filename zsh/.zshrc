@@ -1,7 +1,3 @@
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-VIM="$HOME/.vim"
-
 ##############
 ## HOMEBREW ##
 ##############
@@ -16,11 +12,6 @@ if [ -f '/Users/dave/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/dave/googl
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/dave/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/dave/google-cloud-sdk/completion.zsh.inc'; fi
 
-#############
-## COPILOT ##
-#############
-eval "$(github-copilot-cli alias -- "$0")"
-
 ##############
 ## STARSHIP ##
 ##############
@@ -32,17 +23,22 @@ eval "$(starship init zsh)"
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+eval "$(pyenv init --path)"
 
-##############
-### NVM ######
-##############
+#############
+#### NVM ####
+#############
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
 
 #############
 ## FINALLY ##
 #############
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source $HOME/.config/.functions
 source $HOME/.config/.aliases
 source $HOME/.config/completion.zsh
+export GOOGLE_CLOUD_PROJECT_ID="divesites-205820"
+
+[ -f ~/.inshellisense/key-bindings.zsh ] && source ~/.inshellisense/key-bindings.zsh
