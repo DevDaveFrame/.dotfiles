@@ -1,16 +1,28 @@
 # SETTINGS AND CONFIG ACCESS
+#
+# The *config aliases point into $DOTFILES rather than at the stow symlinks in
+# ~/.config. Editing through a symlink does reach the repo, but only while the
+# package is actually stowed — and when it silently isn't (stow skips a target
+# that already exists as a real file), edits land in an untracked copy and the
+# repo quietly goes stale. Going straight to the source makes that impossible,
+# and fails loudly if a path is wrong instead of failing silently.
+#
+# Single quotes so $DOTFILES is expanded when the alias runs, not when it is
+# defined. $DOTFILES is exported from ~/.zshenv.
 alias vim="nvim"
-alias zshconfig="nvim ~/.zshrc"
-alias aliasconfig="cd ~/.config/ && nvim ~/.config/.aliases && cd -"
-alias functionsconfig="cd ~/.config/ && nvim ~/.config/.functions && cd -"
+alias zshconfig='nvim $DOTFILES/zsh/.zshrc'
+alias aliasconfig='cd $DOTFILES/shell/.config && nvim .aliases && cd -'
+alias functionsconfig='cd $DOTFILES/shell/.config && nvim .functions && cd -'
 alias zsource="source ~/.zshrc"
 alias vimconfig="nvim ~/.vimrc"
-alias nviminit="cd ~/.config/nvim && nvim && ~/.config/nvim/init.lua && cd -"
-alias nvimconfig="cd ~/.config/nvim && nvim ~/.config/nvim && cd -"
-alias starshipconfig="cd ~/.config && nvim starship.toml && cd -"
+alias nviminit='nvim $DOTFILES/nvim/.config/nvim/init.lua'
+alias nvimconfig='cd $DOTFILES/nvim/.config/nvim && nvim . && cd -'
+alias starshipconfig='cd $DOTFILES/starship/.config && nvim starship.toml && cd -'
 alias ghosttyconfig="vim ~/Library/Application\ Support/com.mitchellh.ghostty/config"
-alias skhdconfig="cd ~/.config/skhd/ && vim ~/.config/skhd/skhdrc && cd -"
-alias yabaiconfig="cd ~/.config/yabai/ && vim ~/.config/yabai/yabairc && cd -"
+alias skhdconfig='cd $DOTFILES/skhd/.config/skhd && nvim skhdrc && cd -'
+alias yabaiconfig='cd $DOTFILES/yabai/.config/yabai && nvim yabairc && cd -'
+alias sketchybarconfig='cd $DOTFILES/sketchybar/.config/sketchybar && nvim . && cd -'
+alias dotfiles='cd $DOTFILES && nvim . && cd -'
 alias geminiconfig="vim ~/.gemini/"
 alias claudeconfig="vim ~/.claude/"
 alias getsshpub="tr -d '\n' < ~/.ssh/id_rsa.pub | pbcopy"

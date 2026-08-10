@@ -8,6 +8,25 @@ skip() { printf "  \033[33m⏭\033[0m %s (already installed)\n" "$*"; }
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 STOW_PACKAGES=(git nvim starship zsh zellij skhd yabai sketchybar shell)
 
+# stow silently does nothing when a target already exists as a real file or
+# directory, which is how nvim/zsh/zellij/skhd/shell drifted out of the repo for
+# months. Fail loudly instead.
+check_stow_conflicts() {
+  local pkg conflicts=0
+  for pkg in "${STOW_PACKAGES[@]}"; do
+    [[ -d "$DOTFILES/$pkg" ]] || continue
+    while IFS= read -r src; do
+      local rel="${src#$DOTFILES/$pkg}" tgt
+      tgt="$HOME$rel"
+      if [[ -e "$tgt" && ! -L "$tgt" && ! -d "$tgt" ]]; then
+        printf "  \033[31m!\033[0m %s is a real file, not a stow symlink\n" "$tgt"
+        conflicts=1
+      fi
+    done < <(find "$DOTFILES/$pkg" -type f ! -name .gitkeep)
+  done
+  return $conflicts
+}
+
 # ─────────────────────────────────────────────
 # 1. Xcode CLI tools + Homebrew
 # ─────────────────────────────────────────────
@@ -125,6 +144,17 @@ done
 # 4. Stow packages
 # ─────────────────────────────────────────────
 fmt "Stow dotfiles"
+if ! check_stow_conflicts; then
+  echo
+  echo "  Some targets are real files rather than symlinks, so stow would skip"
+  echo "  them and any edits there would never reach the repo."
+  echo "  Reconcile them into \$DOTFILES first, then re-run, or adopt them with:"
+  echo "    stow --dir=\"$DOTFILES\" --target=\"\$HOME\" --adopt --restow <pkg>"
+  echo "  (--adopt overwrites the repo copy with the live file, so check"
+  echo "   'git diff' immediately afterwards.)"
+  exit 1
+fi
+
 for pkg in "${STOW_PACKAGES[@]}"; do
   if [[ -d "$DOTFILES/$pkg" ]]; then
     stow --dir="$DOTFILES" --target="$HOME" --restow "$pkg"

@@ -23,8 +23,31 @@ Each directory is a [GNU Stow](https://www.gnu.org/software/stow/) package.
 | `skhd`     | `~/.config/skhd/`          |
 | `yabai`    | `~/.config/yabai/`         |
 | `sketchybar` | `~/.config/sketchybar/`  |
+| `shell`    | `~/.config/.aliases`, `~/.config/.functions`, `~/.config/completion.zsh` |
 
-`shell/` is **not** stowed — it's sourced directly via `$DOTFILES/shell/...` in `.zshrc`.
+`shell/` **is** stowed — `.zshrc` sources `$HOME/.config/.aliases` and friends,
+which stow symlinks back here. (It was previously documented as "not stowed,
+sourced directly from `$DOTFILES`", which was never true: those were real,
+untracked files and the repo copies had gone stale.)
+
+## Drift
+
+`stow` does nothing when a target already exists as a real file, and says so
+only in passing. When that happens the config still works, so nothing looks
+wrong — but edits go to an untracked copy and the repo silently rots. This bit
+`nvim`, `zsh`, `zellij`, `skhd` and `shell` for months.
+
+Two guards:
+
+- `run` refuses to stow if any target is a real file, and prints the offenders.
+- The `<app>config` aliases point into `$DOTFILES` rather than `~/.config`, so
+  editing always touches the tracked file and a wrong path fails loudly.
+
+To check by hand:
+
+```bash
+ls -l ~/.config/nvim ~/.zshrc ~/.config/.aliases   # want symlinks, not files
+```
 
 ## SketchyBar
 
