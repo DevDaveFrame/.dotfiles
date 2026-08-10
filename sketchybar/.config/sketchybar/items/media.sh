@@ -1,12 +1,19 @@
 #!/usr/bin/env bash
 #
-# Player-agnostic now-playing, shown right of the notch.
+# Player-agnostic now-playing, sitting immediately left of the notch.
 #
 # The article's version was Spotify-only and drove off SketchyBar's built-in
 # `media_change` event. That event is backed by MediaRemote, which Apple locked
 # down in macOS 15.4, so it is unreliable on macOS 26. Instead this reads the
 # system now-playing session via `media-control`, which works for TIDAL,
 # Spotify, Music and browser audio alike with no per-app branching.
+#
+# Position `q` (left of notch) rather than `e` (right of notch): on this 1512pt
+# display the right-hand widgets begin at x=955 and the notch ends near x=856,
+# leaving only ~99pt of clearance, while this pill is up to 228pt wide. At `e`
+# it collided with the memory and wifi pills. The `q` region is right-anchored
+# against the notch, so this is added BEFORE front_app in sketchybarrc to end up
+# as the rightmost of the two.
 
 source "$HOME/.config/sketchybar/variables.sh"
 source "$HOME/.config/sketchybar/icons.sh"
@@ -14,7 +21,7 @@ source "$HOME/.config/sketchybar/icons.sh"
 # Custom event fired by helpers/media_listener.sh.
 sketchybar --add event media_update
 
-sketchybar --add item media e \
+sketchybar --add item media q \
            --set media $(pill "$GREEN") \
                        icon="$ICON_MEDIA" \
                        scroll_texts=on \

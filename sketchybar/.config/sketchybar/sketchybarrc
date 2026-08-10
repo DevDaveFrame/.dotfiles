@@ -61,9 +61,14 @@ sketchybar --default "${default[@]}"
 # Left, in visual order.
 source "$ITEM_DIR/spaces.sh"
 
-# Notch-aware centre: q sits left of the notch, e sits right of it.
-source "$ITEM_DIR/front_app.sh"
+# Notch-aware centre. Both live in the `q` region (left of the notch), which is
+# right-anchored, so the FIRST item added ends up closest to the notch. On-screen
+# order is therefore: front_app, then media hard against the notch.
+#
+# `e` (right of the notch) is deliberately unused — the right-hand widgets leave
+# only ~99pt of clearance there, far too little for the media pill.
 source "$ITEM_DIR/media.sh"
+source "$ITEM_DIR/front_app.sh"
 
 # Right. SketchyBar places the FIRST item added at the far right, so these are
 # sourced outermost-first — the on-screen order ends up:
