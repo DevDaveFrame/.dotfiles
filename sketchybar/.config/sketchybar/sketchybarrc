@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+#
+# SketchyBar — TokyoNight, one bordered pill per widget.
+# Structure follows the two-file-per-component convention: items/<name>.sh owns
+# appearance and subscriptions, plugins/<name>.sh owns the logic.
+
+source "$HOME/.config/sketchybar/variables.sh"
+source "$HOME/.config/sketchybar/icons.sh"
+
+# The now-playing listener is a long-running child process. Reap any listener
+# from a previous run *before* starting a new one, otherwise every --reload
+# leaves another `media-control stream` behind.
+pkill -f "sketchybar/helpers/media_listener.sh" >/dev/null 2>&1
+
+# ── Bar ──────────────────────────────────────────────────────────────────────
+sketchybar --bar height="$BAR_HEIGHT" \
+                 position=top \
+                 sticky=on \
+                 padding_left=8 \
+                 padding_right=8 \
+                 color="$BAR_COLOR" \
+                 border_width=0 \
+                 corner_radius=0 \
+                 margin=0 \
+                 y_offset=0 \
+                 blur_radius=0 \
+                 shadow=off \
+                 topmost=off \
+                 font_smoothing=on \
+                 show_in_fullscreen=off
+
+# ── Defaults ─────────────────────────────────────────────────────────────────
+default=(
+  icon.font="$FONT:$FONT_STYLE:$ICON_SIZE"
+  label.font="$FONT:$FONT_STYLE:$LABEL_SIZE"
+  icon.color="$WHITE"
+  label.color="$WHITE"
+  padding_left=3
+  padding_right=3
+  icon.padding_left=8
+  icon.padding_right=4
+  label.padding_left=4
+  label.padding_right=8
+  background.height="$ITEM_HEIGHT"
+  background.corner_radius="$CORNER_RADIUS"
+  background.border_width="$BORDER_WIDTH"
+  background.color="$BAR_COLOR"
+  background.drawing=off
+  popup.background.color="$POPUP_BACKGROUND"
+  popup.background.border_color="$POPUP_BORDER"
+  popup.background.border_width="$BORDER_WIDTH"
+  popup.background.corner_radius="$CORNER_RADIUS"
+  popup.background.shadow.drawing=on
+  popup.blur_radius=20
+  popup.horizontal=on
+  popup.y_offset=4
+)
+sketchybar --default "${default[@]}"
+
+# ── Items ────────────────────────────────────────────────────────────────────
+# Left, in visual order.
+source "$ITEM_DIR/spaces.sh"
+
+# Notch-aware centre: q sits left of the notch, e sits right of it.
+source "$ITEM_DIR/front_app.sh"
+source "$ITEM_DIR/media.sh"
+
+# Right. SketchyBar places the FIRST item added at the far right, so these are
+# sourced outermost-first — the on-screen order ends up:
+#   memory  wifi  volume  battery  calendar  clock
+source "$ITEM_DIR/clock.sh"
+source "$ITEM_DIR/calendar.sh"
+source "$ITEM_DIR/battery.sh"
+source "$ITEM_DIR/volume.sh"
+source "$ITEM_DIR/wifi.sh"
+source "$ITEM_DIR/memory.sh"
+
+# ── Go ───────────────────────────────────────────────────────────────────────
+sketchybar --update
+
+# Populate anything that is event-driven and would otherwise sit blank until
+# its first event fires.
+sketchybar --trigger media_update
+
+nohup "$HELPER_DIR/media_listener.sh" >/dev/null 2>&1 &
+
+echo "sketchybar configuration loaded.."

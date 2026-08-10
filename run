@@ -6,7 +6,7 @@ ok()   { printf "  \033[32m✓\033[0m %s\n" "$*"; }
 skip() { printf "  \033[33m⏭\033[0m %s (already installed)\n" "$*"; }
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-STOW_PACKAGES=(git nvim starship zsh zellij skhd yabai shell)
+STOW_PACKAGES=(git nvim starship zsh zellij skhd yabai sketchybar shell)
 
 # ─────────────────────────────────────────────
 # 1. Xcode CLI tools + Homebrew
@@ -98,7 +98,7 @@ fi
 # 3. Tools (brew)
 # ─────────────────────────────────────────────
 fmt "Brew tools"
-tools=(orbstack neovim starship stow ripgrep lazygit gh zellij skhd yabai zsh-syntax-highlighting)
+tools=(orbstack neovim starship stow fzf ripgrep lazygit gh zellij skhd yabai zsh-syntax-highlighting jq media-control)
 for tool in "${tools[@]}"; do
   if brew list "$tool" &>/dev/null; then
     skip "$tool"
@@ -107,6 +107,16 @@ for tool in "${tools[@]}"; do
     ok "$tool"
   fi
 done
+
+# sketchybar lives in FelixKratz's tap, not homebrew-core.
+fmt "SketchyBar"
+if brew list sketchybar &>/dev/null; then
+  skip "sketchybar"
+else
+  brew tap felixkratz/formulae
+  brew install sketchybar
+  ok "sketchybar"
+fi
 
 # ─────────────────────────────────────────────
 # 4. Stow packages
