@@ -53,6 +53,8 @@ Notes:
 - The media widget is player-agnostic (TIDAL, Spotify, Music, browsers) via
   `media-control`. SketchyBar's built-in `media_change` event is unreliable since
   macOS 15.4 locked down MediaRemote.
+- `yabairc` reserves the bar strip with `external_bar all:30:0`. That 30 must be
+  kept in step with `BAR_HEIGHT` in `variables.sh`.
 
 ## Adding a new config
 

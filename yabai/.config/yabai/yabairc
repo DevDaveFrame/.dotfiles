@@ -28,4 +28,10 @@ yabai -m config                                 \
     mouse_drop_action           stack		\
     mouse_follows_focus		on
 
+# Reserve the SketchyBar strip so managed windows don't slide under it.
+# The 30 must track BAR_HEIGHT in ~/.config/sketchybar/variables.sh.
+yabai -m config external_bar all:30:0
+
 echo "yabai configuration loaded.."
+
+borders active_color=0xff2ac3de inactive_color=0xff7aa2f7  width=6.0 &

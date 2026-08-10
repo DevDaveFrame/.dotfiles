@@ -108,15 +108,18 @@ for tool in "${tools[@]}"; do
   fi
 done
 
-# sketchybar lives in FelixKratz's tap, not homebrew-core.
-fmt "SketchyBar"
-if brew list sketchybar &>/dev/null; then
-  skip "sketchybar"
-else
-  brew tap felixkratz/formulae
-  brew install sketchybar
-  ok "sketchybar"
-fi
+# sketchybar and borders live in FelixKratz's tap, not homebrew-core.
+# borders (JankyBorders) is launched from the end of yabairc.
+fmt "FelixKratz tools"
+brew tap felixkratz/formulae
+for tool in sketchybar borders; do
+  if brew list "$tool" &>/dev/null; then
+    skip "$tool"
+  else
+    brew install "$tool"
+    ok "$tool"
+  fi
+done
 
 # ─────────────────────────────────────────────
 # 4. Stow packages

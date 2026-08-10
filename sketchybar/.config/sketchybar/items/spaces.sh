@@ -2,6 +2,11 @@
 #
 # Ten macOS space indicators wrapped in a single red bracket, then a separator.
 #
+# The bracket sizes itself to its children, so the pill's inner padding comes
+# from each space's background padding — setting it on the bracket does nothing.
+# The article uses -5 here, which jams the first and last digit against the
+# border; 0 gives the numbers room to breathe.
+#
 # There is deliberately NO click_script. SIP is enabled on this machine
 # (`csrutil status`), so yabai's scripting addition cannot be loaded and
 # `yabai -m space --focus N` would fail silently on every click. The native
@@ -26,8 +31,8 @@ for sid in $(seq 1 10); do
                                 icon.padding_right=7 \
                                 label.drawing=off \
                                 background.drawing=off \
-                                background.padding_left=-4 \
-                                background.padding_right=-4 \
+                                background.padding_left=0 \
+                                background.padding_right=0 \
                                 script="$PLUGIN_DIR/space.sh"
 done
 
