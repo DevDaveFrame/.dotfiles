@@ -24,6 +24,8 @@ Each directory is a [GNU Stow](https://www.gnu.org/software/stow/) package.
 | `yabai`    | `~/.config/yabai/`         |
 | `sketchybar` | `~/.config/sketchybar/`  |
 | `shell`    | `~/.config/.aliases`, `~/.config/.functions`, `~/.config/completion.zsh` |
+| `ghostty`  | `~/Library/Application Support/com.mitchellh.ghostty/` |
+| `claude`   | `~/.claude/settings.json`, `statusline-command.sh`, `skills/` |
 
 `shell/` **is** stowed — `.zshrc` sources `$HOME/.config/.aliases` and friends,
 which stow symlinks back here. (It was previously documented as "not stowed,
@@ -48,6 +50,31 @@ To check by hand:
 ```bash
 ls -l ~/.config/nvim ~/.zshrc ~/.config/.aliases   # want symlinks, not files
 ```
+
+## claude
+
+`~/.claude` is mostly runtime state and secrets — `.credentials.json` holds OAuth
+tokens, `history.jsonl` is the full prompt history, `projects/` and `sessions/`
+are transcripts. The package therefore tracks **only** `settings.json`,
+`statusline-command.sh` and `skills/`.
+
+`.gitignore` enforces this as a whitelist: everything under `claude/.claude/` is
+ignored and the three tracked paths are re-included by name. Tracking something
+new there means adding a negation deliberately. Do not replace this with a
+blacklist.
+
+## ghostty
+
+The config hard-references `./ghostty-shaders/cursor_blaze_tapered.glsl`, so the
+shader directory is a dependency, not an extra — Ghostty fails to apply the
+custom shader without it.
+
+The shaders are **vendored**, not a submodule. They came from
+[hackr-sh/ghostty-shaders](https://github.com/hackr-sh/ghostty-shaders) (at
+`a17573f`), but `cursor_blaze_tapered.glsl` — the one actually referenced — is a
+local addition that was never committed upstream, so a submodule would restore
+an empty-looking checkout and silently break the config. `run` also clones
+without `--recursive`. Vendoring keeps a fresh machine working.
 
 ## SketchyBar
 

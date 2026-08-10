@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Editor / app backups
+*.bak
+*.bak.[0-9]*
+
+# Claude Code.
+#
+# ~/.claude is overwhelmingly runtime state and secrets: .credentials.json holds
+# OAuth tokens, history.jsonl is the full prompt history, and projects/ and
+# sessions/ are session transcripts. None of that belongs in a public repo.
+#
+# So this is a whitelist, not a blacklist — everything under the package is
+# ignored by default and only the hand-maintained config is re-included. Adding
+# a new tracked file means adding a matching negation here on purpose.
+claude/.claude/*
+!claude/.claude/settings.json
+!claude/.claude/statusline-command.sh
+!claude/.claude/skills/

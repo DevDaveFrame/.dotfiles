@@ -18,13 +18,13 @@ alias vimconfig="nvim ~/.vimrc"
 alias nviminit='nvim $DOTFILES/nvim/.config/nvim/init.lua'
 alias nvimconfig='cd $DOTFILES/nvim/.config/nvim && nvim . && cd -'
 alias starshipconfig='cd $DOTFILES/starship/.config && nvim starship.toml && cd -'
-alias ghosttyconfig="vim ~/Library/Application\ Support/com.mitchellh.ghostty/config"
+alias ghosttyconfig='cd "$DOTFILES/ghostty/Library/Application Support/com.mitchellh.ghostty" && nvim config && cd -'
 alias skhdconfig='cd $DOTFILES/skhd/.config/skhd && nvim skhdrc && cd -'
 alias yabaiconfig='cd $DOTFILES/yabai/.config/yabai && nvim yabairc && cd -'
 alias sketchybarconfig='cd $DOTFILES/sketchybar/.config/sketchybar && nvim . && cd -'
 alias dotfiles='cd $DOTFILES && nvim . && cd -'
-alias geminiconfig="vim ~/.gemini/"
-alias claudeconfig="vim ~/.claude/"
+# Only the tracked config — the rest of ~/.claude is runtime state and secrets.
+alias claudeconfig='cd $DOTFILES/claude/.claude && nvim . && cd -'
 alias getsshpub="tr -d '\n' < ~/.ssh/id_rsa.pub | pbcopy"
 # GIT SHORTCUTS
 alias gs='git status'

@@ -1,0 +1,16 @@
+font-family = "Monaspace Argon Variable"
+font-style = "Medium"
+font-size = 18
+window-padding-x = 8
+window-padding-y = 8
+window-padding-color = extend
+background-opacity = 0.9
+background-blur-radius = 16
+macos-icon = retro
+macos-titlebar-style = tabs
+
+theme = dark: TokyoNight Night, light: TokyoNight Day
+keybind = global:shift+ctrl+alt+cmd+1=toggle_quick_terminal
+custom-shader = ./ghostty-shaders/cursor_blaze_tapered.glsl
+
+keybind = shift+enter=text:\x1b\r
