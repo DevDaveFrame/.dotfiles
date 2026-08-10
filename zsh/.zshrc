@@ -40,5 +40,13 @@ source $HOME/.config/.functions
 source $HOME/.config/.aliases
 source $HOME/.config/completion.zsh
 export GOOGLE_CLOUD_PROJECT_ID="divesites-205820"
+export EDITOR="nvim"
+export MANPAGER="nvim +Man!"
+
 
 [ -f ~/.inshellisense/key-bindings.zsh ] && source ~/.inshellisense/key-bindings.zsh
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/dave/.lmstudio/bin"
+# End of LM Studio CLI section
+

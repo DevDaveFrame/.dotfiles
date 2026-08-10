@@ -1,7 +1,6 @@
 require("config.lazy")
 require("config.colors")
 require("config.keymaps")
-require("config.treesitter")
 require("config.undotree")
 
 vim.opt.conceallevel = 1
@@ -19,8 +18,8 @@ vim.opt.expandtab = true -- Pressing the TAB key will insert spaces instead of a
 vim.opt.softtabstop = 4 -- Number of spaces inserted instead of a TAB character
 vim.opt.shiftwidth = 4 -- Number of spaces inserted when indenting
 
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.wo[0][0].foldmethod = "expr"
 vim.opt.foldenable = true
 vim.opt.foldlevel = 99
 

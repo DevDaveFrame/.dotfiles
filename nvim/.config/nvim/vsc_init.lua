@@ -1,3 +1,4 @@
+vim.g.mapleader = " "
 -- Easy Commands
 vim.keymap.set("n", "<leader>q", ":quit<CR>")
 vim.keymap.set("n", "<leader>s", ":write<CR>")

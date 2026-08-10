@@ -11,10 +11,11 @@ alias starshipconfig="cd ~/.config && nvim starship.toml && cd -"
 alias ghosttyconfig="vim ~/Library/Application\ Support/com.mitchellh.ghostty/config"
 alias skhdconfig="cd ~/.config/skhd/ && vim ~/.config/skhd/skhdrc && cd -"
 alias yabaiconfig="cd ~/.config/yabai/ && vim ~/.config/yabai/yabairc && cd -"
-alias geminiconfig="cd ~/.config/yabai/ && vim ~/.gemini/ && cd -"
-alias claudeconfig="cd ~/.config/yabai/ && vim ~/.claude/ && cd -"
+alias geminiconfig="vim ~/.gemini/"
+alias claudeconfig="vim ~/.claude/"
 alias getsshpub="tr -d '\n' < ~/.ssh/id_rsa.pub | pbcopy"
 # GIT SHORTCUTS
+alias gs='git status'
 alias gco='git checkout '
 alias gcm='git commit -m '
 alias gaa='git add -A'
@@ -45,5 +46,8 @@ alias mv='mv -i'
  alias divesleep="echo 'DIVESITE_LOCAL_APP_COMMAND=sleep inf' >> .env"
 # OBSIDIAN
  alias obs-me="cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/me && nvim scratch.md && cd -"
- alias obs-work="cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/work && nvim todo.md +ObsidianToday && cd -"
-
+ alias obs-work="cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/work && nvim todo.md -c 'Obsidian today' && cd -"
+# Docker SHORTCUTS
+alias dexdive="docker exec divesite-app-1"
+alias dex="docker exec"
+alias dsapp="divesite-app-1"

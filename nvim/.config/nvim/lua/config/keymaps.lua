@@ -1,3 +1,7 @@
+-- Overrides
+-- get rid of pesky sub in favor of mini.surround
+vim.keymap.set("n", "s", "<Nop>")
+
 -- Easy Commands
 vim.keymap.set("n", "<leader>q", ":quit<CR>")
 vim.keymap.set("n", "<leader>s", ":write<CR>")
@@ -8,10 +12,10 @@ vim.keymap.set("n", "<S-l>", "L", { desc = "cursor to last line" })
 -- Personal Preferences
 vim.keymap.set("n", "-", ":Oil<CR>", { desc = "Open parent directory" })
 vim.keymap.set("n", "<leader><Space>", function()
-	require("fzf-lua").files()
+	require("fzf-lua").files({ resume = true })
 end)
 vim.keymap.set("n", "<leader>ps", function()
-	require("fzf-lua").live_grep_native()
+	require("fzf-lua").live_grep_native({ resume = true })
 end)
 vim.keymap.set("n", "<leader>ph", function()
 	require("fzf-lua").oldfiles()
@@ -23,12 +27,35 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 
 -- LSP Nav
-vim.keymap.set("n", "gd", vim.lsp.buf.definition)
-vim.keymap.set("n", "gD", vim.lsp.buf.declaration)
-vim.keymap.set("n", "gr", vim.lsp.buf.references)
+vim.keymap.set("n", "gd", function()
+	require("fzf-lua").lsp_definitions({ jump1 = true })
+end)
+vim.keymap.set("n", "gD", function()
+	require("fzf-lua").lsp_declarations({ jump1 = true })
+end)
+vim.keymap.set("n", "gr", function()
+	require("fzf-lua").lsp_references()
+end)
+vim.keymap.set("n", "<leader>ls", function()
+	require("fzf-lua").lsp_document_symbols()
+end, { desc = "LSP document symbols" })
+vim.keymap.set("n", "<leader>lS", function()
+	require("fzf-lua").lsp_workspace_symbols()
+end, { desc = "LSP workspace symbols" })
+
+-- Pickers
+vim.keymap.set("n", "<leader>pb", function()
+	require("fzf-lua").buffers()
+end, { desc = "buffers" })
+vim.keymap.set("n", "<leader>pd", function()
+	require("fzf-lua").diagnostics_document()
+end, { desc = "document diagnostics" })
+vim.keymap.set("n", "<leader>pD", function()
+	require("fzf-lua").diagnostics_workspace()
+end, { desc = "workspace diagnostics" })
 
 -- Open in cursor
-vim.keymap.set("n", "<leader>oc", function()
+vim.keymap.set("n", "<leader>xc", function()
 	local file = vim.fn.expand("%:p")
 	local line = vim.fn.line(".")
 	local root = vim.fs.root(0, ".git") or vim.fn.getcwd()
@@ -36,9 +63,12 @@ vim.keymap.set("n", "<leader>oc", function()
 	vim.cmd(cmd)
 end, { desc = "Open file in Cursor (project)" })
 
--- Open ObsidianToday
-vim.keymap.set("n", "<leader>ot", "<cmd>ObsidianToday<CR>")
-vim.keymap.set("n", "<leader>oog", "<cmd>ObsidianNewFromTemplate<CR>")
+-- Obsidian
+vim.keymap.set("n", "<leader>ot", "<cmd>Obsidian today<CR>")
+vim.keymap.set("n", "<leader>otm", "<cmd>Obsidian tomorrow<CR>")
+vim.keymap.set("n", "<leader>oxt", "<cmd>Obsidian extract_note<CR>")
+vim.keymap.set("n", "<leader>ops", "<cmd>Obsidian quick_switch<CR>")
+vim.keymap.set("n", "<leader>ont", "<cmd>Obsidian new_from_template<CR>")
 
 vim.keymap.set("n", "<leader>td", function()
 	local pos = vim.api.nvim_win_get_cursor(0)[2]
@@ -47,6 +77,16 @@ vim.keymap.set("n", "<leader>td", function()
 	vim.api.nvim_set_current_line(nline)
 end, { desc = "print today's date in buffer" })
 
+-- Buffer navigation
+vim.api.nvim_create_user_command("BufOnly", function()
+	local cur = vim.api.nvim_get_current_buf()
+	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+		if buf ~= cur and vim.bo[buf].buflisted then
+			pcall(vim.api.nvim_buf_delete, buf, { force = false })
+		end
+	end
+end, {})
+
 vim.keymap.set("n", "<leader>bb", "<C-^>", { desc = "goto prev buffer" })
 vim.keymap.set("n", "<leader>b<BS>", ":bdelete<CR>", { desc = "close buffer" })
-vim.keymap.set("n", "<leader>bO", ':%bdelete|edit #|normal`"<CR>', { desc = "delete all other buffers" })
+vim.keymap.set("n", "<leader>bO", "<cmd>BufOnly<CR>", { desc = "delete all other buffers" })

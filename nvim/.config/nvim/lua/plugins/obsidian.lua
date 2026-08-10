@@ -1,5 +1,5 @@
 return {
-	"epwalsh/obsidian.nvim",
+	"obsidian-nvim/obsidian.nvim",
 	version = "*", -- recommended, use latest release instead of latest commit
 	lazy = true,
 	ft = "markdown",
@@ -16,6 +16,7 @@ return {
 		"nvim-lua/plenary.nvim",
 	},
 	opts = {
+		legacy_commands = false,
 		workspaces = {
 			{
 				name = "me",
@@ -25,15 +26,15 @@ return {
 						-- Optional, if you keep daily notes in a separate directory.
 						folder = "habits/daily",
 						-- Optional, if you want to change the date format for the ID of daily notes.
-						date_format = "%Y-%m-%d-%A-Week-%U",
-						alias_format = "%B %-d, %Y,",
+						date_format = "YYYY-MM-DD-dddd-[Week]-ww",
+						alias_format = "MMMM D, YYYY,",
 						default_tags = { "daily-notes" },
-						template = "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/me/templates/daily.md",
+						template = "daily.md",
 					},
 					templates = {
-						folder = "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/me/templates",
-						date_format = "%Y-%m-%d-%A-Week-%U",
-						time_format = "%H:%M",
+						folder = "templates",
+						date_format = "YYYY-MM-DD-dddd-[Week]-ww",
+						time_format = "HH:mm",
 						-- A map for custom variables, the key should be the variable and the value a function
 						substitutions = {
 							["date:ww"] = function()
@@ -56,17 +57,17 @@ return {
 				overrides = {
 					daily_notes = {
 						-- Optional, if you keep daily notes in a separate directory.
-						folder = "Informa TechTarget/2026/dailies",
+						folder = "InformaTechTarget/2026/dailies",
 						-- Optional, if you want to change the date format for the ID of daily notes.
-						date_format = "%Y-%m-%d-%A-Week-%U",
-						alias_format = "%B %-d, %Y,",
+						date_format = "YYYY-MM-DD-dddd-[Week]-ww",
+						alias_format = "MMMM D, YYYY,",
 						default_tags = { "daily-notes" },
-						template = "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/work/Templates/Daily.md",
+						template = "Daily.md",
 					},
 					templates = {
-						folder = "~/Library/Mobile Documents/iCloud~md~obsidian/Documents/work/Templates",
-						date_format = "%Y-%m-%d-%A-Week-%U",
-						time_format = "%H:%M",
+						folder = "Templates",
+						date_format = "YYYY-MM-DD-dddd-[Week]-ww",
+						time_format = "HH:mm",
 						-- A map for custom variables, the key should be the variable and the value a function
 						substitutions = {
 							["date:ww"] = function()
