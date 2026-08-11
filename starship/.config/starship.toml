@@ -1,5 +1,7 @@
 format = """
-[╒═](bold #ff6ac1)\
+[╒═ ](bold #7aa2f7)\
+$username\
+$directory\
 $git_branch\
 $git_commit\
 $git_state\
@@ -10,10 +12,8 @@ $gcloud\
 $docker_context\
 $cmd_duration\
 $time\
-[═╛](bold #ff6ac1)
-[╰─ ](bold #ff6ac1)\
-$username\
-$directory\
+[═╛](bold #7aa2f7)
+[╰─ ](bold #7aa2f7)\
 $character
 """
 
@@ -29,9 +29,14 @@ $rust
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
 
+# Palette: tokyonight (night) — matches nvim's tokyonight style = "night"
+# bg #1a1b26  fg #c0caf5  comment #565f89  dark #414868
+# blue #7aa2f7  cyan #7dcfff  blue1 #2ac3de  magenta #bb9af7  purple #9d7cd8
+# green #9ece6a  teal #73daca  yellow #e0af68  orange #7aa2f7  red #f7768e
+
 [fill]
 symbol = "═"
-style = "bold #ff6ac1"
+style = "bold #7aa2f7"
 
 # Disable the blank line at the start of the prompt
 # add_newline = false
@@ -39,9 +44,13 @@ style = "bold #ff6ac1"
 # You can also replace your username with a neat symbol like  to save some space
 [username]
 show_always = true
+style_user = "bold #ff9e64"
+style_root = "bold #f7768e"
 format = '[$user/]($style)'
 
 [directory]
+style = "bold #7aa2f7"
+read_only_style = "#ff9e64"
 format = "[$path ]($style)"
 truncation_length = 3
 truncation_symbol = "…/"
@@ -69,24 +78,24 @@ format = '[$symbol ($version) ]($style)'
 
 [docker_context]
 symbol = ""
-format = ' [$symbol $context]($style) $path'
+format = '[$symbol $context]($style)$path'
 detect_files = ["Dockerfile", "docker-compose.local.yml", "docker-compose.yml"]
 detect_folders = ["build"]
 
 [gcloud]
 symbol = ""
-format = ' on [$symbol $account(\($project\))]($style)'
+format = ' [$symbol(\($project\))]($style) '
 
 [git_branch]
 symbol = ""
-format = ' [$symbol $branch ]($style)'
+format = '[⦋](bold #7aa2f7)[$symbol $branch ](bold #9ece6a)'
 
 [git_metrics]
 added_style = 'bold blue'
 format = '[+$added]($added_style)/[-$deleted]($deleted_style) '
 
 [git_status]
-format = '[$all_status$ahead_behind ]($style)'
+format = '[$all_status$ahead_behind]($style)[⦌](bold #7aa2f7)'
 
 [golang]
 symbol = " "
@@ -113,7 +122,7 @@ format = ' [$symbol ($version)](yellow)'
 [time]
 disabled = false
 time_format = "%R" # Hour:Minute Format
-format = '[  $time ]($style)'
+format = '[  $time ](#ff9e64)'
 
 [cmd_duration]
 min_time = 500
