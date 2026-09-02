@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  kanata as a system LaunchDaemon.
+
+  Root, not a LaunchAgent: the Karabiner virtual HID daemon exposes its IPC
+  under /Library/Application Support/org.pqrs/tmp/rootonly/, mode 700 root.
+
+  KeepAlive is the dict form on purpose. `<true/>` would restart kanata
+  immediately after the lctl+spc+esc panic exit, making the panic key useless.
+  This form restarts on a crash and stays down after a clean exit.
+
+  No --port and no --debug: both have been reported to cause address-in-use
+  failures on macOS 26.
+
+  Installed by ./run. Reload after a config edit:
+    sudo launchctl kickstart -k system/dev.kanata.kanata
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>dev.kanata.kanata</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/opt/homebrew/bin/kanata</string>
+        <string>--nodelay</string>
+        <string>--cfg</string>
+        <string>/Users/dave/.config/kanata/kanata.kbd</string>
+    </array>
+
+    <key>UserName</key>
+    <string>root</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/var/log/kanata.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/var/log/kanata.log</string>
+</dict>
+</plist>

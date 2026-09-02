@@ -1,0 +1,88 @@
+;; CAGS home row mods, and caps lock as SUPER.
+;;
+;; See skhd/.config/skhd/skhdrc for what SUPER and hyper are bound to. This
+;; file supplies the key; skhdrc consumes it.
+;;
+;;   caps (tap)   esc
+;;   caps (hold)  SUPER = ctrl + alt + cmd
+;;   caps (hold) + shift  hyper -- no config needed, physical shift stacks on
+;;                        top of the three modifiers kanata is holding.
+;;
+;; Home row, outward from the index finger, both hands (CAGS):
+;;
+;;   a s d f       j k l ;
+;;   C A G S       S G A C
+;;
+;; Reload after editing:  sudo launchctl kickstart -k system/dev.kanata.kanata
+
+(defcfg
+  process-unmapped-keys yes
+
+  ;; If another key was pressed within this many ms, a tap-hold key resolves as
+  ;; a tap immediately, before the hand logic is even consulted. This is what
+  ;; stops mid-word rolls from firing modifiers while typing at speed.
+  ;; Overridden to 0 on caps below -- SUPER has to work mid-flow.
+  tap-hold-require-prior-idle 150
+
+  ;; Internal keyboard only. The ZSA has its own hyper key and does not want
+  ;; a second one, and an ungrabbed external keyboard is the escape hatch if
+  ;; this config ever makes the machine unusable.
+  ;;
+  ;; The name must match `sudo kanata --list` exactly.
+  macos-dev-names-include (
+    "Apple Internal Keyboard / Trackpad"
+  )
+)
+
+;; Which physical keys belong to which hand. tap-hold-opposite-hand resolves
+;; to the hold only when the next key is on the other hand, so same-hand rolls
+;; ("as", "sad", "fd") type as letters instead of firing a modifier.
+(defhands
+  (left  q w e r t a s d f g z x c v b)
+  (right y u i o p h j k l ; n m , . /))
+
+(defsrc
+  q    w   e   r   t   y   u   i   o   p
+  caps a   s   d   f   g   h   j   k   l   ;
+  z    x   c   v   b   n   m   ,   .   /
+                   spc
+)
+
+(defvar
+  ;; Hold this long with nothing else pressed and the modifier engages.
+  hold-time 200
+)
+
+(defalias
+  ;; tap-hold-press, not opposite-hand: caps is a deliberate modifier, so it
+  ;; must commit to the hold on the next keypress rather than wait out a
+  ;; timeout, and it has no hand of its own.
+  cap (tap-hold-press 200 150 esc (multi lctl lalt lmet) (require-prior-idle 0))
+
+  ;; -release, not plain opposite-hand: the hold only commits once the
+  ;; interrupting key has been pressed AND released. In a fast roll like "jest"
+  ;; the j is already up by the time e is released, so it resolves as a tap.
+  ;; Holding j down through e's release is what asks for the modifier.
+  ;;
+  ;; (timeout hold) makes a deliberate hold engage the mod on its own. The
+  ;; default is (timeout tap), where holding alone just types the letter and
+  ;; only an opposite-hand keypress can ever produce a modifier.
+  ;;
+  ;; Cost: the interrupting key's output waits for its release, which is a few
+  ;; tens of ms at typing speed.
+  a (tap-hold-opposite-hand-release $hold-time a lctl (timeout hold))
+  s (tap-hold-opposite-hand-release $hold-time s lalt (timeout hold))
+  d (tap-hold-opposite-hand-release $hold-time d lmet (timeout hold))
+  f (tap-hold-opposite-hand-release $hold-time f lsft (timeout hold))
+  j (tap-hold-opposite-hand-release $hold-time j rsft (timeout hold))
+  k (tap-hold-opposite-hand-release $hold-time k rmet (timeout hold))
+  l (tap-hold-opposite-hand-release $hold-time l ralt (timeout hold))
+  ; (tap-hold-opposite-hand-release $hold-time ; rctl (timeout hold))
+)
+
+(deflayer base
+  q    w   e   r   t   y   u   i   o   p
+  @cap @a  @s  @d  @f  g   h   @j  @k  @l  @;
+  z    x   c   v   b   n   m   ,   .   /
+                   spc
+)

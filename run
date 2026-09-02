@@ -6,11 +6,17 @@ ok()   { printf "  \033[32m✓\033[0m %s\n" "$*"; }
 skip() { printf "  \033[33m⏭\033[0m %s (already installed)\n" "$*"; }
 
 DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-STOW_PACKAGES=(git nvim starship zsh zellij skhd yabai sketchybar shell ghostty claude)
+STOW_PACKAGES=(git nvim starship zsh zellij skhd yabai sketchybar shell ghostty claude kanata)
 
 # stow silently does nothing when a target already exists as a real file or
 # directory, which is how nvim/zsh/zellij/skhd/shell drifted out of the repo for
 # months. Fail loudly instead.
+#
+# A correctly stowed target resolves back to the repo file. Test that, not
+# `-L` on the leaf: stow folds a whole directory into one symlink where it can
+# (~/.config/yabai is a single symlink, not one per file), so `-L` on the files
+# inside is false for every one of them and reported all of yabai, sketchybar
+# and kanata as drift.
 check_stow_conflicts() {
   local pkg conflicts=0
   for pkg in "${STOW_PACKAGES[@]}"; do
@@ -18,11 +24,20 @@ check_stow_conflicts() {
     while IFS= read -r src; do
       local rel="${src#$DOTFILES/$pkg}" tgt
       tgt="$HOME$rel"
-      if [[ -e "$tgt" && ! -L "$tgt" && ! -d "$tgt" ]]; then
+      [[ -e "$tgt" ]] || continue
+      if [[ "$(readlink -f "$tgt")" != "$src" ]]; then
         printf "  \033[31m!\033[0m %s is a real file, not a stow symlink\n" "$tgt"
         conflicts=1
       fi
-    done < <(find "$DOTFILES/$pkg" -type f ! -name .gitkeep)
+      # Skip what stow will never link: its built-in default ignore list
+      # (which includes .gitignore -- see the turnstile-spin skill templates),
+      # the per-package ignore file, and kanata/launchd, which goes to
+      # /Library/LaunchDaemons instead of $HOME.
+    done < <(find "$DOTFILES/$pkg" \
+      -name .stow-local-ignore -prune -o \
+      -name .gitignore -prune -o \
+      -path "$DOTFILES/kanata/launchd" -prune -o \
+      -type f ! -name .gitkeep -print)
   done
   return $conflicts
 }
@@ -78,13 +93,20 @@ else
   eval "$(pyenv init -)"
   ok "pyenv"
 fi
-if ! pyenv versions --bare | grep -q '^3\.'; then
+# Capture first, then match. `cmd | grep -q` is a trap under `set -o pipefail`:
+# grep exits at the first match and closes the pipe, the producer dies of
+# SIGPIPE, and pipefail reports that as the pipeline's status -- so `!` inverted
+# this guard and it reinstalled Python on every run.
+py_versions="$(pyenv versions --bare 2>/dev/null || true)"
+if grep -q '^3\.' <<<"$py_versions"; then
+  skip "Python 3.x"
+else
   latest=$(pyenv install --list | grep -E '^\s+3\.[0-9]+\.[0-9]+$' | tail -1 | tr -d ' ')
-  pyenv install "$latest"
+  # -s: never prompt, and exit 0 if the version is already there. Without it a
+  # "no" at the prompt returns nonzero and `set -e` kills the whole script.
+  pyenv install -s "$latest"
   pyenv global "$latest"
   ok "Python $latest"
-else
-  skip "Python 3.x"
 fi
 
 fmt "Node (nvm)"
@@ -100,11 +122,13 @@ else
 fi
 # shellcheck disable=SC1091
 [[ -s "$NVM_DIR/nvm.sh" ]] && . "$NVM_DIR/nvm.sh"
-if ! nvm ls --no-colors lts/* 2>/dev/null | grep -q 'v'; then
+# Same pipefail/SIGPIPE trap as the pyenv guard above.
+nvm_lts="$(nvm ls --no-colors 'lts/*' 2>/dev/null || true)"
+if grep -q 'v' <<<"$nvm_lts"; then
+  skip "Node LTS"
+else
   nvm install --lts
   ok "Node LTS"
-else
-  skip "Node LTS"
 fi
 if ! command -v pnpm &>/dev/null; then
   npm install -g pnpm
@@ -117,7 +141,7 @@ fi
 # 3. Tools (brew)
 # ─────────────────────────────────────────────
 fmt "Brew tools"
-tools=(orbstack neovim starship stow fzf ripgrep lazygit gh zellij skhd yabai zsh-syntax-highlighting jq media-control)
+tools=(orbstack neovim starship stow fzf ripgrep lazygit gh zellij skhd yabai zsh-syntax-highlighting jq media-control kanata)
 for tool in "${tools[@]}"; do
   if brew list "$tool" &>/dev/null; then
     skip "$tool"
@@ -163,7 +187,66 @@ for pkg in "${STOW_PACKAGES[@]}"; do
 done
 
 # ─────────────────────────────────────────────
-# 5. macOS defaults
+# 5. kanata (needs sudo)
+# ─────────────────────────────────────────────
+#
+# Three moving parts, and all of them have to line up or the keyboard silently
+# stays unremapped:
+#
+#   1. Karabiner-DriverKit-VirtualHIDDevice, PINNED. kanata talks to it over a
+#      versioned IPC protocol -- driver v6.x is protocol 5, v7.x is 6, v8.x is
+#      7 -- and homebrew kanata 1.12.0 speaks protocol 5. Installing "the
+#      latest" driver gives a daemon kanata cannot talk to. Bump this only
+#      together with the driver version named in the kanata release notes.
+#   2. The virtual HID daemon, which the standalone driver package does not
+#      start by itself. Without it kanata loops `connect_failed asio.system:2`.
+#   3. kanata itself, as a root LaunchDaemon.
+#
+# Karabiner-Elements would cover 1 and 2 for you, and must still not be
+# installed: it auto-updates its bundled driver past v6 and breaks kanata.
+#
+# Input Monitoring and Accessibility cannot be granted from a script. See the
+# kanata section of README.md.
+
+fmt "kanata"
+KANATA_DRIVER_VERSION=6.2.0
+VHID_MANAGER="/Applications/.Karabiner-VirtualHIDDevice-Manager.app/Contents/MacOS/Karabiner-VirtualHIDDevice-Manager"
+
+if [[ -x "$VHID_MANAGER" ]]; then
+  skip "Karabiner DriverKit driver"
+else
+  echo "  Installing Karabiner-DriverKit-VirtualHIDDevice $KANATA_DRIVER_VERSION (needs sudo)"
+  pkgdir="$(mktemp -d)"
+  curl -fsSL -o "$pkgdir/driver.pkg" \
+    "https://github.com/pqrs-org/Karabiner-DriverKit-VirtualHIDDevice/releases/download/v${KANATA_DRIVER_VERSION}/Karabiner-DriverKit-VirtualHIDDevice-${KANATA_DRIVER_VERSION}.pkg"
+  sudo installer -pkg "$pkgdir/driver.pkg" -target /
+  rm -rf "$pkgdir"
+  ok "Karabiner DriverKit driver $KANATA_DRIVER_VERSION"
+fi
+
+sudo "$VHID_MANAGER" forceActivate >/dev/null
+ok "driver activated"
+
+# Order matters: the virtual HID daemon has to be up before kanata starts.
+# dev.kanata.logcap caps /var/log/kanata.log -- see README, kanata 1.12.0 spams
+# it at ~2.5 MB/day and neither --quiet nor newsyslog can stop that.
+for label in org.pqrs.Karabiner-VirtualHIDDevice-Daemon dev.kanata.kanata dev.kanata.logcap; do
+  sudo install -o root -g wheel -m 644 \
+    "$DOTFILES/kanata/launchd/$label.plist" "/Library/LaunchDaemons/$label.plist"
+  if sudo launchctl print "system/$label" &>/dev/null; then
+    sudo launchctl kickstart -k "system/$label"
+    ok "$label (reloaded)"
+  else
+    sudo launchctl bootstrap system "/Library/LaunchDaemons/$label.plist"
+    ok "$label"
+  fi
+done
+
+echo "  If the keyboard is not remapped, check 'sudo tail /var/log/kanata.log'."
+echo "  The usual cause is Input Monitoring -- see README.md."
+
+# ─────────────────────────────────────────────
+# 6. macOS defaults
 # ─────────────────────────────────────────────
 fmt "macOS defaults"
 

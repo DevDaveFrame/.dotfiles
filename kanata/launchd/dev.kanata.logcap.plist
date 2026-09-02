@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Caps /var/log/kanata.log at 10 MB.
+
+  kanata 1.12.0 prints `virtual_hid_keyboard_ready true` in a loop
+  (jtroo/kanata#2109) at about 2.5 MB/day. It comes from the C++ driverkit
+  client on stdout, not kanata's Rust logger, so --quiet does not silence it,
+  and kanata's own INFO lines share that stream so stdout cannot simply be
+  discarded.
+
+  Truncating rather than rotating is deliberate: launchd opens StandardOutPath
+  once at spawn and never reopens it, so newsyslog would leave kanata writing
+  to the rotated inode. macOS newsyslog has no truncate-in-place flag. The file
+  is opened O_APPEND, so truncating it under a running kanata is safe -- the
+  next write simply lands at offset 0.
+
+  Delete this once homebrew ships a kanata newer than 1.12.0 with #2109 fixed.
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>dev.kanata.logcap</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>f=/var/log/kanata.log; [ -f "$f" ] || exit 0; [ "$(stat -f %z "$f")" -gt 10485760 ] || exit 0; : > "$f"</string>
+    </array>
+
+    <key>UserName</key>
+    <string>root</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StartInterval</key>
+    <integer>3600</integer>
+</dict>
+</plist>

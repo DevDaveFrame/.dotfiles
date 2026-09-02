@@ -1,0 +1,3 @@
+# launchd/ is installed to /Library/LaunchDaemons by ./run, not symlinked
+# into $HOME. Everything else in this package is a normal stow target.
+^/launchd$
