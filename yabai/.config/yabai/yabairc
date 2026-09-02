@@ -1,18 +1,24 @@
 #!/user/bin bash
 yabai -m rule --add app="^System Settings$" manage=off
+yabai -m rule --add app="^Insta360 Link Controller$" manage=off
+yabai -m rule --add app="^BUSY$" manage=off
 yabai -m rule --add app="^Finder$" manage=off
 yabai -m rule --add app="^OrbStack$" manage=off
+
+# Ghostty uses native macOS tabs. Each cmd-t makes a real NSWindow, so yabai
+# splits a pane for it, then the window merges into the tab group and leaves a
+# dead node in the bsp tree. Re-apply the layout to flush it.
+# https://ghostty.org/docs/help/macos-tiling-wms
+yabai -m signal --add app='^Ghostty$' event=window_created action='yabai -m space --layout bsp'
+yabai -m signal --add app='^Ghostty$' event=window_destroyed action='yabai -m space --layout bsp'
+
+# mouse_modifier stays ctrl, not SUPER: yabai accepts a single modifier
+# keyword only, so it cannot mirror the ctrl+alt+cmd chord skhd uses.
 # global settings
 yabai -m config                                 \
-    layout                      float           \
+    layout                      bsp           \
     window_insertion_point      focused        \
     window_zoom_persist         on             \
-    window_shadow               off            \
-    window_animation_duration   0.0            \
-    window_opacity_duration     0.0            \
-    active_window_opacity       1.0            \
-    normal_window_opacity       0.70           \
-    window_opacity              off            \
     insert_feedback_color       0xff90EE90     \
     split_ratio                 0.50           \
     split_type                  auto           \
@@ -21,7 +27,7 @@ yabai -m config                                 \
     bottom_padding              12             \
     left_padding                12             \
     right_padding               12             \
-    window_gap                  06             \
+    window_gap                  12             \
     mouse_modifier              ctrl           \
     mouse_action1               move           \
     mouse_action2               resize         \
@@ -34,4 +40,4 @@ yabai -m config external_bar all:30:0
 
 echo "yabai configuration loaded.."
 
-borders active_color=0xff2ac3de inactive_color=0xff7aa2f7  width=6.0 &
+borders active_color=0xff9ece6a inactive_color=0xff7aa2f7  width=6.0 &

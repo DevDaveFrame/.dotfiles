@@ -29,6 +29,13 @@ $rust
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
 
+# Cold-cache dir scans (first prompt of a session) blow the 30ms default and
+# suppress every detect_files/detect_folders module (docker_context, python, nodejs...).
+# Budget, not a delay: no cost when the scan is fast.
+scan_timeout = 250
+# Use dirent type instead of stat() per entry. Symlinked dirs count as files.
+follow_symlinks = false
+
 # Palette: tokyonight (night) — matches nvim's tokyonight style = "night"
 # bg #1a1b26  fg #c0caf5  comment #565f89  dark #414868
 # blue #7aa2f7  cyan #7dcfff  blue1 #2ac3de  magenta #bb9af7  purple #9d7cd8

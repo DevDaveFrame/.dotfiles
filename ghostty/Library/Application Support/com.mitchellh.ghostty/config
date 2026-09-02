@@ -10,7 +10,9 @@ macos-icon = retro
 macos-titlebar-style = tabs
 
 theme = dark: TokyoNight Night, light: TokyoNight Day
-keybind = global:shift+ctrl+alt+cmd+1=toggle_quick_terminal
+# hyper - return. ctrl+alt+cmd (SUPER) - return opens a full Ghostty window via skhd.
+keybind = global:shift+ctrl+alt+cmd+enter=toggle_quick_terminal
 custom-shader = ./ghostty-shaders/cursor_blaze_tapered.glsl
 
 keybind = shift+enter=text:\x1b\r
+term = xterm-256color
