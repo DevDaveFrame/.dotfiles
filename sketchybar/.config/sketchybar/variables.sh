@@ -13,10 +13,7 @@ export PLUGIN_DIR="$CONFIG_DIR/plugins"
 export HELPER_DIR="$CONFIG_DIR/helpers"
 
 # ── Typography ───────────────────────────────────────────────────────────────
-# Berkeley Mono's Nerd Font patch only ships Regular and Italic on this machine
-# (`ls ~/Library/Fonts/BerkeleyMonoVariableNerdFont*`), so never ask for Bold —
-# SketchyBar silently falls back to a system font when the style is missing.
-export FONT="BerkeleyMonoVariable Nerd Font Mono"
+export FONT="BlexMono Nerd Font"
 export FONT_STYLE="Regular"
 export LABEL_SIZE=13.0
 export ICON_SIZE=14.0
@@ -27,7 +24,7 @@ export ICON_SIZE=14.0
 # breathing room. Set both to 26 for the article's exact look.
 export BAR_HEIGHT=30
 export ITEM_HEIGHT=24
-export CORNER_RADIUS=6
+export CORNER_RADIUS=9
 export BORDER_WIDTH=2
 
 # ── TokyoNight (Night) ───────────────────────────────────────────────────────

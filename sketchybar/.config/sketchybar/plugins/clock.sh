@@ -5,4 +5,4 @@
 
 source "$HOME/.config/sketchybar/variables.sh"
 
-sketchybar --set "$NAME" label="$(date '+%H:%M:%S')"
+sketchybar --set "$NAME" label="$(date '+%H:%M')"

@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
-#
 # Sets the focused app's name and a matching Nerd Font glyph.
-#
-# Unlike the article this also draws an icon, via app_icon() from icons.sh —
-# stock Nerd Font glyphs only, no sketchybar-app-font dependency.
-
 source "$HOME/.config/sketchybar/variables.sh"
 source "$HOME/.config/sketchybar/icons.sh"
 

@@ -4,7 +4,7 @@
 
 source "$HOME/.config/sketchybar/variables.sh"
 
-sketchybar --add item front_app q \
+sketchybar --add item front_app left \
            --set front_app $(pill "$WHITE") \
                            label.max_chars=22 \
                            associated_display=active \
