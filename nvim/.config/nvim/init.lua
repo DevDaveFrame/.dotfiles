@@ -38,10 +38,6 @@ vim.opt.foldmethod = "expr"
 vim.opt.foldenable = true
 vim.opt.foldlevel = 99
 
-vim.lsp.config("*", {
-	capabilities = vim.lsp.protocol.make_client_capabilities(),
-})
-
 vim.filetype.add({
 	extension = {
 		mdx = "markdown",

@@ -78,13 +78,6 @@ vim.keymap.set("n", "<leader>xc", function()
 	vim.cmd(cmd)
 end, { desc = "Open file in Cursor (project)" })
 
--- Obsidian
-vim.keymap.set("n", "<leader>ot", "<cmd>Obsidian today<CR>")
-vim.keymap.set("n", "<leader>otm", "<cmd>Obsidian tomorrow<CR>")
-vim.keymap.set("n", "<leader>oxt", "<cmd>Obsidian extract_note<CR>")
-vim.keymap.set("n", "<leader>ops", "<cmd>Obsidian quick_switch<CR>")
-vim.keymap.set("n", "<leader>ont", "<cmd>Obsidian new_from_template<CR>")
-
 vim.keymap.set("n", "<leader>td", function()
 	local pos = vim.api.nvim_win_get_cursor(0)[2]
 	local line = vim.api.nvim_get_current_line()
