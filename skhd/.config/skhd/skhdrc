@@ -54,6 +54,11 @@ hyper - s : open -a "Slack"
 hyper - c : open -a "Cursor"
 hyper - z : open -a "Zed"
 
+# Type test. The one-shot rule catches the next Chrome window to spawn, so it
+# lands already floating and centred -- no tile-then-float flicker -- and the
+# rule removes itself once applied. Same grid as hyper - v.
+hyper - t : yabai -m rule --add --one-shot app="^Google Chrome$" manage=off grid=10:10:2:2:6:6; open -na "Google Chrome" --args --new-window "https://monkeytype.com"
+
 # Focus (vim directions)
 cmd + ctrl + alt - h : yabai -m window --focus west
 cmd + ctrl + alt - j : yabai -m window --focus south

@@ -1,0 +1,9 @@
+WRN 2026-09-10T09:44:37.621 ?.54371    server_start:197: Failed to start server: operation not permitted: /tmp/claude-502/nvim.dave.frame/b1vdP7/nvim.54371.0
+WRN 2026-09-10T09:44:37.716 ?.54371    server_start:197: Failed to start server: operation not permitted: /tmp/claude-502/nvim.dave.frame/b1vdP7/fzf-lua.1789047877.54371.1
+WRN 2026-09-10T09:45:23.223 ?.54749    server_start:197: Failed to start server: operation not permitted: /tmp/claude-502/nvim.dave.frame/PIbyoz/nvim.54749.0
+WRN 2026-09-10T09:45:23.249 ?.54749    server_start:197: Failed to start server: operation not permitted: /tmp/claude-502/nvim.dave.frame/PIbyoz/fzf-lua.1789047923.54749.1
+WRN 2026-09-10T09:49:16.265 ?.57566    server_start:197: Failed to start server: operation not permitted: /tmp/claude-502/nvim.dave.frame/pVjGw5/nvim.57566.0
+WRN 2026-09-10T09:49:16.339 ?.57566    server_start:197: Failed to start server: operation not permitted: /tmp/claude-502/nvim.dave.frame/pVjGw5/fzf-lua.1789048156.57566.1
+WRN 2026-09-23T11:22:34.463 ?.39007    server_start:197: Failed to start server: operation not permitted: /tmp/claude-502/nvim.dave.frame/3yhqsV/nvim.39007.0
+WRN 2026-09-23T11:46:44.104 ?.51971    server_start:197: Failed to start server: operation not permitted: /tmp/claude-502/nvim.dave.frame/QRD56K/nvim.51971.0
+WRN 2026-09-23T11:46:44.296 ?.51971    server_start:197: Failed to start server: operation not permitted: /tmp/claude-502/nvim.dave.frame/QRD56K/fzf-lua.1790178404.51971.1

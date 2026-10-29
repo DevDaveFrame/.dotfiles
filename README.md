@@ -81,6 +81,39 @@ local addition that was never committed upstream, so a submodule would restore
 an empty-looking checkout and silently break the config. `run` also clones
 without `--recursive`. Vendoring keeps a fresh machine working.
 
+## zsh startup
+
+A new tab used to take ~0.6–1s to reach a usable prompt; it now takes tens of
+milliseconds. Things that keep it there, and that look safe to "tidy up" but
+aren't:
+
+- **nvm is not sourced at startup.** `.zshrc` follows `~/.nvm/alias/default`
+  to the version directory itself and puts it on PATH; `nvm` loads on first
+  use. Sourcing `nvm.sh` costs ~280ms a shell.
+- **`typeset -U fpath` before `compinit`.** `brew shellenv` exports `FPATH`,
+  so nested shells (zellij, nvim `:terminal`) inherited it and got brew's and
+  OrbStack's dirs a second time. compinit then saw a different file count,
+  rebuilt the dump (~300ms), and the next tab rebuilt it back.
+- **Tool init output is cached** in `~/.cache/zsh/init/` (brew, starship,
+  pyenv), keyed on each binary's resolved path, so upgrades regenerate it.
+  Delete the directory to force a refresh. The completion dump is
+  `~/.cache/zsh/zcompdump-<version>`, fully re-checked once a day.
+
+`bench/zbench.py` measures all of this. It is not a stow package. It starts
+zsh the way Ghostty does (environment, shell integration, login shell) in a
+pseudo-terminal and times the first prompt and the first typed command, across
+a tab in `$HOME`, a tab in a repo, a nested pane, and a tab right after a pane.
+
+```bash
+python3 bench/zbench.py run                                   # current numbers
+python3 bench/zbench.py trace                                 # which startup lines cost what
+python3 bench/zbench.py parity --snapshot ~/.cache/zbench/p.txt   # before a change...
+python3 bench/zbench.py parity --check ~/.cache/zbench/p.txt      # ...and after: same node, python, PATH, completions?
+python3 bench/zbench.py freeze ~/.cache/zbench/baseline       # freeze current config; then compare against it:
+python3 bench/zbench.py --zdotdir ~/.cache/zbench/baseline run --save ~/.cache/zbench/before.json
+python3 bench/zbench.py run --compare ~/.cache/zbench/before.json --budget-ms 100 --budget-ms tab-repo=200
+```
+
 ## SketchyBar
 
 TokyoNight status bar, one bordered pill per widget. Layout:

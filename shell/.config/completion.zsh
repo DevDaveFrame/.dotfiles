@@ -25,7 +25,25 @@ bindkey -M menuselect '^xh' accept-and-hold                # Hold
 bindkey -M menuselect '^xn' accept-and-infer-next-history  # Next
 bindkey -M menuselect '^xu' undo                           # Undo
 
-autoload -U compinit; compinit
+# fpath must look the same in every shell, or compinit decides the dump is stale
+# and rebuilds it (~300ms). brew shellenv exports FPATH, so nested shells
+# (zellij, nvim :terminal) inherit it and then get brew's and OrbStack's dirs
+# added a second time.
+typeset -U fpath
+
+# -C trusts the dump without rescanning fpath or running compaudit. Do the full
+# check when the dump is missing or a day old, so new completions still show up.
+autoload -U compinit
+() {
+  local dump=${XDG_CACHE_HOME:-$HOME/.cache}/zsh/zcompdump-$ZSH_VERSION
+  local stale=( ${dump}(N.mh+24) )
+  if [[ -s $dump && -z $stale ]]; then
+    compinit -C -d $dump
+  else
+    mkdir -p ${dump:h}
+    compinit -d $dump && touch $dump
+  fi
+}
 _comp_options+=(globdots) # With hidden files
 
 # Only work with the Zsh function vman
@@ -53,7 +71,7 @@ zstyle ':completion:*' completer _extensions _complete _approximate
 
 # Use cache for commands using cache
 zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/zsh/.zcompcache"
+zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh/.zcompcache"
 # Complete the alias when _expand_alias is used as a function
 zstyle ':completion:*' complete true
 

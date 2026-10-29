@@ -14,6 +14,13 @@ return {
 				},
 			},
 			fzf_colors = true,
+			lsp = {
+				code_actions = {
+					-- Diff preview of what each action will do (needs git-delta).
+					previewer = "codeaction_native",
+					preview_pager = "delta --side-by-side --width=$FZF_PREVIEW_COLUMNS --hunk-header-style=omit --file-style=omit",
+				},
+			},
 			keymap = {
 				builtin = {
 					["<C-u>"] = "preview-page-up",

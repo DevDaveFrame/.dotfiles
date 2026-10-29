@@ -43,6 +43,21 @@ vim.keymap.set("n", "<leader>lS", function()
 	require("fzf-lua").lsp_workspace_symbols()
 end, { desc = "LSP workspace symbols" })
 
+-- Diagnostics / code actions
+-- Built-ins already cover a lot: <C-W>d (float), ]d / [d (jump), gra (code
+-- action), grn (rename), grr (references), gO (symbols). These are leader-style
+-- aliases for the ones reached most often.
+vim.keymap.set("n", "<leader>cd", function()
+	vim.diagnostic.open_float({ scope = "line" })
+end, { desc = "Line diagnostics (float)" })
+vim.keymap.set({ "n", "v" }, "<leader>ca", function()
+	require("fzf-lua").lsp_code_actions()
+end, { desc = "Code action" })
+vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, { desc = "Rename symbol" })
+vim.keymap.set("n", "<leader>cl", function()
+	vim.diagnostic.config({ virtual_lines = not vim.diagnostic.config().virtual_lines })
+end, { desc = "Toggle diagnostic virtual_lines" })
+
 -- Pickers
 vim.keymap.set("n", "<leader>pb", function()
 	require("fzf-lua").buffers()

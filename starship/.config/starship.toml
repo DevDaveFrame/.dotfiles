@@ -1,6 +1,5 @@
 format = """
 [╒═ ](bold #7aa2f7)\
-$username\
 $directory\
 $git_branch\
 $git_commit\
@@ -8,12 +7,10 @@ $git_state\
 $git_status\
 $git_metrics\
 $fill\
-$gcloud\
-$docker_context\
 $cmd_duration\
 $time\
 [═╛](bold #7aa2f7)
-[╰─ ](bold #7aa2f7)\
+[╰─](bold #7aa2f7)\
 $character
 """
 
@@ -73,6 +70,7 @@ truncation_symbol = "…/"
 "Work" = " "
 "divesite" = "󰷀"
 "iCloud~md~obsidian" = ""
+".dotfiles" = ""
 
 # Keep in mind that the order matters. For example:
 # "Important Documents" = "  "

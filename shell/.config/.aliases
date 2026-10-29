@@ -28,11 +28,13 @@ alias claudeconfig='cd $DOTFILES/claude/.claude && nvim . && cd -'
 alias getsshpub="tr -d '\n' < ~/.ssh/id_rsa.pub | pbcopy"
 # GIT SHORTCUTS
 alias gs='git status'
+alias gl='git log --oneline'
 alias gco='git checkout '
 alias gcm='git commit -m '
 alias gaa='git add -A'
 alias gpush='git push'
 alias gpull='git pull'
+alias gref='git checkout main && git pull'
 # BASH OVERRIDES
 alias mv='mv -i'
 # NAV SHORTCUTS
@@ -57,9 +59,11 @@ alias mv='mv -i'
 # DIVE STUFF
  alias divesleep="echo 'DIVESITE_LOCAL_APP_COMMAND=sleep inf' >> .env"
 # OBSIDIAN
- alias obs-me="cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/me && nvim scratch.md && cd -"
- alias obs-work="cd ~/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/work && nvim todo.md -c 'Obsidian today' && cd -"
+ # Passing the file (not just -c) keeps the snacks dashboard from opening first.
+ alias obs-work="cd ~/Documents/Notes/ && nvim scratch.md -c ScratchNote && cd -"
 # Docker SHORTCUTS
 alias dexdive="docker exec divesite-app-1"
 alias dex="docker exec"
 alias dsapp="divesite-app-1"
+# Caffeine
+alias wake="caffeinate -dimu -t $((60*60*8)) &"

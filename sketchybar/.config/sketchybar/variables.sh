@@ -13,10 +13,10 @@ export PLUGIN_DIR="$CONFIG_DIR/plugins"
 export HELPER_DIR="$CONFIG_DIR/helpers"
 
 # ── Typography ───────────────────────────────────────────────────────────────
-export FONT="BlexMono Nerd Font"
+export FONT="BerkeleyMonoVariable Nerd Font Mono"
 export FONT_STYLE="Regular"
-export LABEL_SIZE=13.0
-export ICON_SIZE=14.0
+export LABEL_SIZE=14.0
+export ICON_SIZE=16.0
 
 # ── Geometry ─────────────────────────────────────────────────────────────────
 # The article uses BAR_HEIGHT == ITEM_HEIGHT == 26, so its pills fill the bar
