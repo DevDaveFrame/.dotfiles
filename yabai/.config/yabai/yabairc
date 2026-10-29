@@ -5,6 +5,9 @@ yabai -m rule --add app="^BUSY$" manage=off
 yabai -m rule --add app="^Finder$" manage=off
 yabai -m rule --add app="^OrbStack$" manage=off
 
+# Zettelkasten quick-capture window (hyper - n in skhdrc): float it, centred.
+yabai -m rule --add app="^Ghostty$" title="^pks-capture$" manage=off grid=8:8:1:1:6:6
+
 # Ghostty uses native macOS tabs. Each cmd-t makes a real NSWindow, so yabai
 # splits a pane for it, then the window merges into the tab group and leaves a
 # dead node in the bsp tree. Re-apply the layout to flush it.
